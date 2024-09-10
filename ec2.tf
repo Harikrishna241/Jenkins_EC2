@@ -3,9 +3,15 @@
 # AMI
 #Instanc type 
 resource "aws_instance" "Prod" {
-    ami = "ami-041e2ea9402c46c32"
-    instance_type = "t2.micro"
+    for_each = var.instance_names
+    ami = each.value
+    instance_type = "t3.medium"
     vpc_security_group_ids = [aws_security_group.sg.id]
+
+    tags = merge(var.tag_info,{
+        Name = "${each.key}"
+        module = "${each.key}"
+        })
 }
 
 resource "aws_security_group" "sg" { 
